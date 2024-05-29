@@ -32,17 +32,22 @@ const updateConcesionario = async (req, res, next) => {
   try {
     const { id } = req.params
     const oldConcesionario = await Concesionario.findById(id)
-    const newConcesionario = new Concesionario(req.body)
+    let newConcesionario = new Concesionario(req.body)
 
     newConcesionario._id = id
-    newConcesionario.marcas = [
-      ...oldConcesionario.marcas,
-      ...newConcesionario.marcas
-    ]
-    newConcesionario.vehiculos = [
-      ...oldConcesionario.vehiculos,
-      ...newConcesionario.vehiculos
-    ]
+    console.log(newConcesionario.marcas, newConcesionario.vehiculos)
+    newConcesionario = await Concesionario.updateOne(
+      { _id: id },
+      {
+        nombre: newConcesionario.nombre || oldConcesionario.nombre,
+        direccion: newConcesionario.direccion || oldConcesionario.direccion,
+        telefono: newConcesionario.telefono || oldConcesionario.telefono,
+        $addToSet: {
+          vehiculos: { $each: newConcesionario.vehiculos },
+          marcas: { $each: newConcesionario.marcas }
+        }
+      }
+    )
 
     const concesionarioUpdate = await Concesionario.findByIdAndUpdate(
       id,
