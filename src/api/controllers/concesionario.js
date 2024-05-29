@@ -35,7 +35,6 @@ const updateConcesionario = async (req, res, next) => {
     let newConcesionario = new Concesionario(req.body)
 
     newConcesionario._id = id
-    console.log(newConcesionario.marcas, newConcesionario.vehiculos)
     newConcesionario = await Concesionario.updateOne(
       { _id: id },
       {
